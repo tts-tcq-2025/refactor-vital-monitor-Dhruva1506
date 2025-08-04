@@ -1,4 +1,4 @@
-#include "./monitor.h"
+#include "monitor.h"
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -8,14 +8,12 @@ using std::flush;
 using std::this_thread::sleep_for;
 using std::chrono::seconds;
 
-// Threshold constants (can be extended or parameterized later)
 constexpr float TEMP_LOW = 95.0f;
 constexpr float TEMP_HIGH = 102.0f;
 constexpr float PULSE_LOW = 60.0f;
 constexpr float PULSE_HIGH = 100.0f;
 constexpr float SPO2_LOW = 90.0f;
 
-// Pure function - no side effects, only checks and returns status
 VitalStatus checkVitals(float temperature, float pulseRate, float spo2) {
     if (temperature < TEMP_LOW || temperature > TEMP_HIGH) {
         return VitalStatus::TemperatureOutOfRange;
@@ -29,7 +27,6 @@ VitalStatus checkVitals(float temperature, float pulseRate, float spo2) {
     return VitalStatus::OK;
 }
 
-// Helper blinking function to avoid duplication
 static void blinkAlertMessage(const char* msg) {
     cout << msg << "\n";
     for (int i = 0; i < 6; i++) {
@@ -38,12 +35,11 @@ static void blinkAlertMessage(const char* msg) {
         cout << "\r *" << flush;
         sleep_for(seconds(1));
     }
-    cout << "\r  \n"; // clear blinking
+    cout << "\r  \n"; // Clear blinking
 }
 
-// I/O function to alert based on status
 void alertIfNeeded(VitalStatus status) {
-    switch(status) {
+    switch (status) {
         case VitalStatus::TemperatureOutOfRange:
             blinkAlertMessage("Temperature is critical!");
             break;
