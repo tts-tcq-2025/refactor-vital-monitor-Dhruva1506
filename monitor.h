@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef MONITOR_H
 #define MONITOR_H
 
@@ -17,5 +15,3 @@ VitalStatus checkVitals(float temperature, float pulseRate, float spo2);
 void alertIfNeeded(VitalStatus status);
 
 #endif // MONITOR_H
-
-
