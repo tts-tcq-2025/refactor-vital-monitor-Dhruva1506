@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "./monitor.h"
+#include "monitor.h"
 
 TEST(Monitor, TemperatureOutOfRange) {
     EXPECT_EQ(checkVitals(94.9f, 70, 95), VitalStatus::TemperatureOutOfRange);
@@ -20,8 +20,6 @@ TEST(Monitor, AllVitalsOk) {
 }
 
 TEST(Monitor, MultipleIssues) {
-    // Priority is Temperature first, then Pulse, then SPO2
     EXPECT_EQ(checkVitals(94.0f, 59, 85), VitalStatus::TemperatureOutOfRange);
     EXPECT_EQ(checkVitals(98.0f, 59, 85), VitalStatus::PulseOutOfRange);
 }
-
