@@ -1,7 +1,27 @@
 #include <gtest/gtest.h>
 #include "./monitor.h"
 
-TEST(Monitor, NotOkWhenAnyVitalIsOffRange) {
-  ASSERT_FALSE(vitalsOk(99, 102, 70));
-  ASSERT_TRUE(vitalsOk(98.1, 70, 98));
+TEST(Monitor, TemperatureOutOfRange) {
+    EXPECT_EQ(checkVitals(94.9f, 70, 95), VitalStatus::TemperatureOutOfRange);
+    EXPECT_EQ(checkVitals(102.1f, 70, 95), VitalStatus::TemperatureOutOfRange);
 }
+
+TEST(Monitor, PulseOutOfRange) {
+    EXPECT_EQ(checkVitals(98.6f, 59, 95), VitalStatus::PulseOutOfRange);
+    EXPECT_EQ(checkVitals(98.6f, 101, 95), VitalStatus::PulseOutOfRange);
+}
+
+TEST(Monitor, Spo2OutOfRange) {
+    EXPECT_EQ(checkVitals(98.6f, 70, 89), VitalStatus::Spo2OutOfRange);
+}
+
+TEST(Monitor, AllVitalsOk) {
+    EXPECT_EQ(checkVitals(98.6f, 70, 95), VitalStatus::OK);
+}
+
+TEST(Monitor, MultipleIssues) {
+    // Priority is Temperature first, then Pulse, then SPO2
+    EXPECT_EQ(checkVitals(94.0f, 59, 85), VitalStatus::TemperatureOutOfRange);
+    EXPECT_EQ(checkVitals(98.0f, 59, 85), VitalStatus::PulseOutOfRange);
+}
+
