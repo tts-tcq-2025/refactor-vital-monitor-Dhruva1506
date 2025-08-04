@@ -1,3 +1,17 @@
-#pragma once
+#ifndef MONITOR_H
+#define MONITOR_H
 
-int vitalsOk(float temperature, float pulseRate, float spo2);
+enum class VitalStatus {
+    OK,
+    TemperatureOutOfRange,
+    PulseOutOfRange,
+    Spo2OutOfRange
+};
+
+// Pure function: check vitals, return status
+VitalStatus checkVitals(float temperature, float pulseRate, float spo2);
+
+// Alert function: handle alerts with blinking and messages
+void alertIfNeeded(VitalStatus status);
+
+#endif // MONITOR_H
