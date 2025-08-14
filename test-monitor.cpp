@@ -1,25 +1,29 @@
 #include <gtest/gtest.h>
-#include "monitor.h"
+#include "./monitor.h"
 
-TEST(Monitor, TemperatureOutOfRange) {
-    EXPECT_EQ(checkVitals(94.9f, 70, 95), VitalStatus::TemperatureOutOfRange);
-    EXPECT_EQ(checkVitals(102.1f, 70, 95), VitalStatus::TemperatureOutOfRange);
+TEST(MonitorValidation, TemperatureChecks) {
+  EXPECT_TRUE(isTemperatureCritical(103));
+  EXPECT_TRUE(isTemperatureCritical(94));
+  EXPECT_FALSE(isTemperatureCritical(98.6));
 }
 
-TEST(Monitor, PulseOutOfRange) {
-    EXPECT_EQ(checkVitals(98.6f, 59, 95), VitalStatus::PulseOutOfRange);
-    EXPECT_EQ(checkVitals(98.6f, 101, 95), VitalStatus::PulseOutOfRange);
+TEST(MonitorValidation, PulseRateChecks) {
+  EXPECT_TRUE(isPulseRateOutOfRange(59));
+  EXPECT_TRUE(isPulseRateOutOfRange(101));
+  EXPECT_FALSE(isPulseRateOutOfRange(75));
 }
 
-TEST(Monitor, Spo2OutOfRange) {
-    EXPECT_EQ(checkVitals(98.6f, 70, 89), VitalStatus::Spo2OutOfRange);
+TEST(MonitorValidation, Spo2Checks) {
+  EXPECT_TRUE(isSpo2Low(89));
+  EXPECT_FALSE(isSpo2Low(95));
 }
 
-TEST(Monitor, AllVitalsOk) {
-    EXPECT_EQ(checkVitals(98.6f, 70, 95), VitalStatus::OK);
+TEST(MonitorVitalsOk, ReturnsFalseIfAnyVitalIsOffRange) {
+  EXPECT_FALSE(vitalsOk(103, 80, 98));   // Temp critical
+  EXPECT_FALSE(vitalsOk(98, 50, 98));    // Pulse low
+  EXPECT_FALSE(vitalsOk(98, 80, 85));    // Spo2 low
 }
 
-TEST(Monitor, MultipleIssues) {
-    EXPECT_EQ(checkVitals(94.0f, 59, 85), VitalStatus::TemperatureOutOfRange);
-    EXPECT_EQ(checkVitals(98.0f, 59, 85), VitalStatus::PulseOutOfRange);
+TEST(MonitorVitalsOk, ReturnsTrueIfAllVitalsNormal) {
+  EXPECT_TRUE(vitalsOk(98.6, 70, 97));
 }
