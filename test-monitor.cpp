@@ -1,5 +1,6 @@
+#include "./monitor.h"
+
 #include <gtest/gtest.h>
-#include "monitor.h"
 #include <vector>
 #include <string>
 
@@ -26,9 +27,9 @@ TEST(MonitorValidation, Spo2Checks) {
 }
 
 TEST(MonitorVitalsOk, ReturnsFalseIfAnyVitalIsOffRange) {
-  EXPECT_FALSE(vitalsOk(103, 80, 98));   
-  EXPECT_FALSE(vitalsOk(98, 50, 98));    
-  EXPECT_FALSE(vitalsOk(98, 80, 85));    
+  EXPECT_FALSE(vitalsOk(103, 80, 98));
+  EXPECT_FALSE(vitalsOk(98, 50, 98));
+  EXPECT_FALSE(vitalsOk(98, 80, 85));
 }
 
 TEST(MonitorVitalsOk, ReturnsTrueIfAllVitalsNormal) {
