@@ -11,14 +11,10 @@ struct VitalCheck {
   float max;
 };
 
-
-bool isTemperatureCritical(float temperature);
-bool isPulseRateOutOfRange(float pulseRate);
-bool isSpo2Low(float spo2);
-
+// Pure functions
 VitalStatus evaluateVital(float value, float min, float max);
 std::vector<std::string> checkVitals(const std::vector<VitalCheck>& vitals);
 
-
-void blinkWarningMessage(const char* message);
+// I/O handling
+void blinkWarningMessage(const std::string& message);
 bool vitalsOk(float temperature, float pulseRate, float spo2);
