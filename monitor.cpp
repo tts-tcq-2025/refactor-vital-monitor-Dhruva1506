@@ -2,7 +2,7 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
-#include <algorithm>  // for std::find_if
+#include <vector>
 
 using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds;
 
@@ -18,6 +18,23 @@ bool isSpo2Low(float spo2) {
   return spo2 < 90;
 }
 
+VitalStatus evaluateVital(float value, float min, float max) {
+  if (value < min) return VitalStatus::LOW;
+  if (value > max) return VitalStatus::HIGH;
+  return VitalStatus::NORMAL;
+}
+
+std::vector<std::string> checkVitals(const std::vector<VitalCheck>& vitals) {
+  std::vector<std::string> warnings;
+  for (const auto& vital : vitals) {
+    VitalStatus status = evaluateVital(vital.value, vital.min, vital.max);
+    if (status == VitalStatus::LOW || status == VitalStatus::HIGH) {
+      warnings.push_back(vital.name + " out of range!");
+    }
+  }
+  return warnings;
+}
+
 void blinkWarningMessage(const char* message) {
   cout << message << '\n';
   for (int i = 0; i < 6; i++) {
@@ -26,31 +43,19 @@ void blinkWarningMessage(const char* message) {
     cout << "\r *" << flush;
     sleep_for(seconds(1));
   }
-  cout << "\r  \r" << flush;  // Clear the line after blinking
+  cout << "\r  \r" << flush;  // Clear the line
 }
 
-int vitalsOk(float temperature, float pulseRate, float spo2) {
-  struct Check {
-    bool (*func)(float);
-    float value;
-    const char* message;
-  };
+bool vitalsOk(float temperature, float pulseRate, float spo2) {
+  std::vector<VitalCheck> vitals = {
+      {"Temperature", temperature, 95, 102},
+      {"Pulse Rate", pulseRate, 60, 100},
+      {"SpO2", spo2, 90, 100}};
 
-  const Check checks[] = {
-    { isTemperatureCritical, temperature, "Temperature is critical!" },
-    { isPulseRateOutOfRange, pulseRate, "Pulse Rate is out of range!" },
-    { isSpo2Low, spo2, "Oxygen Saturation out of range!" }
-  };
-
-  // Use std::find_if instead of raw loop
-  auto it = std::find_if(std::begin(checks), std::end(checks),
-                         [](const Check& check) {
-                           return check.func(check.value);
-                         });
-
-  if (it != std::end(checks)) {
-    blinkWarningMessage(it->message);
-    return 0;
+  auto warnings = checkVitals(vitals);
+  if (!warnings.empty()) {
+    blinkWarningMessage(warnings.front().c_str());  // Show only first issue
+    return false;
   }
-  return 1;
+  return true;
 }
