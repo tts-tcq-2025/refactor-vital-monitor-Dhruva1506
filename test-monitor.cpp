@@ -1,10 +1,8 @@
-
 #include "./monitor.h"
 
-
-#include <gtest/gtest.h>
 #include <vector>
 #include <string>
+#include <gtest/gtest.h>
 
 TEST(MonitorValidation, TemperatureChecks) {
   EXPECT_TRUE(isTemperatureCritical(103));
